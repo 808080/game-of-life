@@ -20,21 +20,26 @@ class Game {
     constructor(rows, cols, cellSize) {
         this.COLS = cols;
         this.ROWS = rows;
-        this.currentState = this.initField();
-        this.newState = this.initField();
+
         this.CELL_SIZE = cellSize;
 
         CANVAS.width = rows * cellSize;
         CANVAS.height = cols * cellSize;
 
-        this.isRunning = false;
         this.frame = 0;
 
+        this.init();
+    };
+
+    init = () => {
+        this.isRunning = false;
+        this.currentState = this.generateField();
+        this.newState = this.generateField();
         this.drawGrid();
         CANVAS.addEventListener('click', this.setFirstGen);
     };
 
-    initField = () => Array.from(new Array(this.COLS), () => new Array(this.ROWS).fill(0));
+    generateField = () => Array.from(new Array(this.COLS), () => new Array(this.ROWS).fill(0));
 
     drawCell = (x, y, cellState) => {
         CTX.fillStyle = cellState;
@@ -145,17 +150,13 @@ class Game {
     reset = () => {
         clearTimeout(this.timeOut);
         cancelAnimationFrame(this.frame);
-        this.isRunning = false;
         CTX.clearRect(0, 0, CANVAS.width, CANVAS.height);
-        this.currentState = this.initField();
-        this.newState = this.initField();
-        this.drawGrid();
-        CANVAS.addEventListener('click', this.setFirstGen);
+        this.init();
     };
 }
 
 
-const game = new Game(50, 50, 15);
+const game = new Game(100, 50, 15);
 
 document.getElementById('start').addEventListener('click', game.start);
 document.getElementById('reset').addEventListener('click', game.reset);
