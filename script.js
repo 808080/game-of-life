@@ -66,6 +66,7 @@ class Game {
 
     drawField = () => {
         const cellsToChange = [];
+        this.hasSignsOfLife = false;
 
         for (let x = 0; x < this.ROWS; x++) {
             for (let y = 0; y < this.COLS; y++) {
@@ -79,6 +80,15 @@ class Game {
                     this.drawCell(x * this.CELL_SIZE, y * this.CELL_SIZE, CELL_STATES[this.newState[y][x]]);
                 }
             }
+        }
+
+        if (!cellsToChange.length) {
+            this.isRunning = false;
+            cancelAnimationFrame(this.frame);
+            clearTimeout(this.timeOut);
+
+            alert(`Our civilization has ${this.hasSignsOfLife ? 'reached harmony!' : 'perished :('}`);
+            if (!this.hasSignsOfLife) this.reset();
         }
 
         for (let i = 0; i < cellsToChange.length; i++) {
@@ -124,6 +134,9 @@ class Game {
         }
 
         this.newState[y][x] = isAlive;
+        if (isAlive && !this.hasSignsOfLife) {
+            this.hasSignsOfLife = isAlive;
+        }
     };
 
     setFirstGen = (e) => {
@@ -134,6 +147,7 @@ class Game {
     };
 
     render = () => {
+        if (!this.isRunning) return;
         this.drawField();
         this.timeOut = setTimeout(() => {
             this.frame = requestAnimationFrame(this.render);
